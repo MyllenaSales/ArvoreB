@@ -1,11 +1,10 @@
 package com.example;
-
 import java.util.ArrayList;
 
 class Node {
     boolean ehFolha; 
     ArrayList<Integer> chaves; 
-    ArrayList<Node> filhos; 
+    ArrayList<Node> filhos;  
 
     Node(boolean ehFolha) {
         this.ehFolha = ehFolha;
@@ -13,5 +12,3 @@ class Node {
         this.filhos = new ArrayList<>();
     }
 }
-
-

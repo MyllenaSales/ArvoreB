@@ -1,4 +1,5 @@
 package com.example;
+import java.util.ArrayList;
 
 public class ArvoreB {
     private Node raiz;
@@ -6,32 +7,31 @@ public class ArvoreB {
 
     public ArvoreB(int ordem) {
         this.ordem = ordem;
-        raiz = new Node(true);  // Raiz começa como folha
+        raiz = new Node(true);  /* aq ele seta a raiz como folha */
     }
 
-
     public void inserir(int valor) {
-        if (raiz.chaves.size() == (ordem * 2 - 1)) {  
+        if (raiz.chaves.size() == (ordem - 1)) {
             Node novaRaiz = new Node(false);  
             novaRaiz.filhos.add(raiz);  
-            dividir(novaRaiz, 0, raiz); 
-            raiz = novaRaiz;  
+            dividir(novaRaiz, 0, raiz);  
+            raiz = novaRaiz; 
         }
         inserirRecursivo(raiz, valor);  
     }
 
+   
     private void inserirRecursivo(Node no, int valor) {
         int i = 0;
-        /* aq ele procura a posição ideal para a nova chave */
+        /* aq ele encontra a posição correta pra add a chave */
         while (i < no.chaves.size() && valor > no.chaves.get(i)) {
             i++;
         }
-
         if (no.ehFolha) {
-            no.chaves.add(i, valor); 
+            no.chaves.add(i, valor);  
         } else {
             Node filho = no.filhos.get(i);
-            if (filho.chaves.size() == (ordem * 2 - 1)) {
+            if (filho.chaves.size() == (ordem - 1)) {
                 dividir(no, i, filho);  
                 if (valor > no.chaves.get(i)) {
                     i++;
@@ -41,26 +41,33 @@ public class ArvoreB {
         }
     }
 
-    
+   
     private void dividir(Node pai, int indice, Node filho) {
         Node novoFilho = new Node(filho.ehFolha);
-        int meio = ordem - 1;
+        int meio = (ordem - 1) / 2;  /* aq ele pega a chave central */
 
-        for (int i = 0; i < meio; i++) {
-            novoFilho.chaves.add(filho.chaves.remove(ordem));
+        /* aq ele move as chaves pro novo nó filho */
+        for (int i = meio + 1; i < filho.chaves.size(); i++) {
+            novoFilho.chaves.add(filho.chaves.get(i));
         }
-
+        /* aq é só pra garantir q o msm possa ocorrer c um nó folha */
         if (!filho.ehFolha) {
-            for (int i = 0; i <= meio; i++) {
-                novoFilho.filhos.add(filho.filhos.remove(ordem));
+            for (int i = meio + 1; i < filho.filhos.size(); i++) {
+                novoFilho.filhos.add(filho.filhos.get(i));
             }
         }
-
-        pai.chaves.add(indice, filho.chaves.remove(meio));  /* aq a chave do meio sobe */
-        pai.filhos.add(indice + 1, novoFilho);  
+        /* remove as chaves do no original */
+        for (int i = filho.chaves.size() - 1; i >= meio + 1; i--) {
+            filho.chaves.remove(i);
+        }
+        for (int i = filho.filhos.size() - 1; i >= meio + 1; i--) {
+            filho.filhos.remove(i);
+        }
+        /* a chave do meio é promovida para o nó pai */
+        pai.chaves.add(indice, filho.chaves.remove(meio)); 
+        pai.filhos.add(indice + 1, novoFilho); 
     }
 
-    
     public void percorrer() {
         percorrer(raiz);
         System.out.println();
@@ -69,13 +76,13 @@ public class ArvoreB {
     private void percorrer(Node no) {
         for (int i = 0; i < no.chaves.size(); i++) {
             if (!no.ehFolha) {
-                percorrer(no.filhos.get(i));
+                percorrer(no.filhos.get(i));  
             }
-            System.out.print(no.chaves.get(i) + " ");
+            System.out.print(no.chaves.get(i) + " ");  
         }
+        /* Após imprimir todas as chaves, se não for folha, percorre o último filho */
         if (!no.ehFolha) {
-            percorrer(no.filhos.get(no.chaves.size()));
+            percorrer(no.filhos.get(no.chaves.size()));  
         }
     }
-
 }
